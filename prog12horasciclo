@@ -181,7 +181,7 @@ while (ciclo < 5) {
   lcd.print("iniciando...");
   delay(3000);
   }
-  totalSeconds = 10 - 5;
+  totalSeconds = 12L*60L*60L;
 }
 
   lcd.clear();

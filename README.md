@@ -1,10 +1,12 @@
 README - Sistema de Cultura Automática
 
-  Visão Geral:
+
+~Visão Geral:
 
 Este código implementa um sistema de cultura automática utilizando um display LCD e duas bombas controladas por um Arduino. O sistema permite automatizar o processo de renovação do meio de cultura em ciclos programados.
 
-  Hardware Necessário:
+
+~Hardware Necessário:
 
 -Arduino
 
@@ -16,7 +18,8 @@ Este código implementa um sistema de cultura automática utilizando um display 
 
 -Fios de conexão
 
-  Funcionamento:
+
+~Funcionamento:
 
 -Inicialização:
 
@@ -38,7 +41,8 @@ O processo se repete por um número determinado de ciclos.
 
 O botão Stop pode ser pressionado a qualquer momento para interromper o processo.
 
-Parâmetros Importantes
+
+~Parâmetros Importantes
 
 -Tempo de Contagem:
 
@@ -58,7 +62,8 @@ totalSeconds = 12L*60L*60L;
 
 Se alterar o valor no início, lembre-se de modificar também essa linha para garantir a consistência do intervalo entre as renovações.
 
-Ciclos de Renovação
+
+-Ciclos de Renovação:
 
 O sistema executa 5 ciclos antes de finalizar automaticamente. Esse número pode ser modificado alterando a condição no loop:
 
@@ -75,6 +80,4 @@ Antes de iniciar, verifique se os tempos configurados estão adequados para seu 
 O botão Stop permite interromper o processo a qualquer momento.
 
 O sistema exibe mensagens no LCD para indicar o status da cultura.
-
-Esse sistema pode ser ajustado para diferentes aplicações laboratoriais ou industriais conforme necessário.
 

@@ -12,7 +12,7 @@ Este código implementa um sistema de cultura automática utilizando um display 
  
 -Display LCD (16x2) com interface LiquidCrystal
  
--Dois botões (Start e Stop)
+-Dois botões, um com mola e um sem mola.
  
 -Duas bombas controladas por relés
  

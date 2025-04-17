@@ -1,0 +1,192 @@
+#include <LiquidCrystal.h>
+
+// Configuração dos pinos do LCD: RS, E, D4, D5, D6, D7
+LiquidCrystal lcd(13, 12, 11, 10, 9, 8);
+
+// Definição dos pinos para os botões e motores
+int botstart = 6;
+int botstop = 5;
+
+int Bombaext = A0;
+int Bombarefill = A1;
+
+unsigned long totalSeconds = 12L * 60L * 60L; // 12 horas em segundos
+int ciclo = 0;
+
+//-------------------------------------------------------------------
+
+bool checarbotstop() {
+  if (digitalRead(botstop) == HIGH) {
+    lcd.clear();
+    delay(50);
+    lcd.setCursor(0, 0);
+    lcd.print("Cultura");
+    lcd.setCursor(0, 1);
+    lcd.print("Interrompida");
+    delay(2000);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+//-------------------------------------------------------------------
+
+String formatTime(int days, int hours, int minutes, int seconds) {
+  char buffer[17]; // 16 caracteres + terminador
+  snprintf(buffer, sizeof(buffer), "%02dd %02d:%02d", days, hours, minutes);
+  return String(buffer);
+}
+
+//-------------------------------------------------------------------
+
+void tutorial() {
+  lcd.clear();
+  delay(50);
+  while (digitalRead(botstart) == LOW && digitalRead(botstop) == LOW) {
+    lcd.setCursor(0, 0);
+    lcd.print("1 - cultura auto.");
+    delay(100);
+
+    if (digitalRead(botstop) == HIGH || digitalRead(botstart) == HIGH) {
+      lcd.clear();
+      delay(50);
+      return;
+    }
+
+    lcd.setCursor(0, 1);
+    lcd.print("2 - cancelar");
+    delay(100);
+
+    if (digitalRead(botstop) == HIGH || digitalRead(botstart) == HIGH) {
+      lcd.clear();
+      delay(50);
+      return;
+    }
+  }
+}
+
+//-------------------------------------------------------------------
+
+void setup() {
+  pinMode(botstart, INPUT);
+  pinMode(botstop, INPUT);
+  pinMode(Bombaext, OUTPUT);
+  pinMode(Bombarefill, OUTPUT);
+  Serial.begin(9600);
+  lcd.begin(16, 2);
+
+  while (digitalRead(botstart) == LOW) {
+    lcd.setCursor(0, 0);
+    lcd.print("Pressione Start");
+    delay(100);
+  }
+
+  lcd.clear();
+  delay(50);
+  lcd.setCursor(0, 0);
+  lcd.print("Iniciando...");
+  delay(3000);
+  tutorial();
+}
+
+void loop() {
+  int botstar = digitalRead(botstart);
+  int botsto = digitalRead(botstop);
+
+  if (botstar == HIGH && botsto == LOW) {
+    Culturautomatica();
+  }
+}
+
+//-------------------------------------------------------------------
+
+void Culturautomatica() {
+  if (checarbotstop()) return;
+
+  totalSeconds = 12L * 60L * 60L;
+
+  lcd.clear();
+  delay(50);
+  lcd.setCursor(0, 0);
+  lcd.print("Cultura auto.");
+  lcd.setCursor(0, 1);
+  lcd.print("Iniciando...");
+  delay(3000);
+
+  if (checarbotstop()) return;
+
+  lcd.clear();
+  delay(50);
+  lcd.setCursor(0, 0);
+  lcd.print("Contagem");
+  lcd.setCursor(0, 1);
+  lcd.print("Inicia em 5s");
+  delay(5000);
+
+  if (checarbotstop()) return;
+
+  while (ciclo < 5) {
+    while (totalSeconds > 0) {
+      int days = totalSeconds / 86400;
+      int hours = (totalSeconds % 86400) / 3600;
+      int minutes = (totalSeconds % 3600) / 60;
+      int seconds = totalSeconds % 60;
+
+      lcd.clear();
+      delay(50);
+      lcd.setCursor(0, 0);
+      lcd.print("Renovando meio");
+      lcd.setCursor(0, 1);
+      lcd.print(formatTime(days, hours, minutes, seconds));
+
+      if (checarbotstop()) return;
+
+      delay(1000);
+      totalSeconds--;
+    }
+
+    if (checarbotstop()) return;
+
+    lcd.clear();
+    delay(50);
+    lcd.setCursor(0, 0);
+    lcd.print("Renovando Meio");
+    digitalWrite(Bombaext, HIGH);
+    delay(25000);
+    digitalWrite(Bombaext, LOW);
+    delay(500);
+
+    if (checarbotstop()) return;
+
+    digitalWrite(Bombarefill, HIGH);
+    delay(25000);
+    digitalWrite(Bombarefill, LOW);
+
+    ciclo++;
+
+    if (ciclo < 5) {
+      lcd.clear();
+      delay(50);
+      lcd.setCursor(0, 0);
+      lcd.print("Ciclo ");
+      lcd.print(ciclo);
+      lcd.setCursor(0, 1);
+      lcd.print("iniciando...");
+      delay(3000);
+    }
+
+    totalSeconds = 12L * 60L * 60L;
+  }
+
+  lcd.clear();
+  delay(50);
+  lcd.setCursor(0, 0);
+  lcd.print("Cultura auto.");
+  lcd.setCursor(0, 1);
+  lcd.print("Finalizada");
+  delay(3000);
+  lcd.clear();
+  delay(50);
+  ciclo = 0;
+}
